@@ -1,46 +1,31 @@
 #!/bin/sh
 # ----------------------------------------------------------------------------
-# Apache Maven Wrapper startup script for *nix
+# Maven Wrapper
 # ----------------------------------------------------------------------------
 
-MVN_WRAPPER_VERSION="3.1.0"
+BASEDIR="$(cd "$(dirname "$0")" && pwd)"
 
-if [ -z "$MVNW_REPOURL" ]; then
-  MVNW_REPOURL="https://repo.maven.apache.org/maven2"
-fi
-
-if [ -z "$MVNW_VERBOSE" ]; then
-  MVNW_VERBOSE="false"
-fi
-
-if [ "$MVNW_VERBOSE" = "true" ]; then
-  set -x
-fi
-
-BASE_DIR=$(dirname "$0")
-
-# Determine the Maven Wrapper's location
-WRAPPER_DIR="${BASE_DIR}/.mvn/wrapper"
-WRAPPER_JAR="${WRAPPER_DIR}/maven-wrapper.jar"
-WRAPPER_PROPERTIES="${WRAPPER_DIR}/maven-wrapper.properties"
-
-# Determine Java executable
-if [ -n "$JAVA_HOME" ]; then
-  JAVA_EXEC="$JAVA_HOME/bin/java"
+# Check for Java
+if [ -z "$JAVA_HOME" ]; then
+  JAVA_EXE=$(command -v java)
 else
-  JAVA_EXEC="java"
+  JAVA_EXE="$JAVA_HOME/bin/java"
 fi
 
-if ! command -v "$JAVA_EXEC" >/dev/null 2>&1; then
-  echo "Error: Java executable not found in JAVA_HOME or system path." >&2
+if [ ! -x "$JAVA_EXE" ]; then
+  echo "Error: JAVA_HOME is not set and no 'java' command found in system PATH." >&2
   exit 1
 fi
 
-# Verify the existence of the Maven Wrapper JAR
-if [ ! -f "$WRAPPER_JAR" ]; then
-  echo "Error: Maven Wrapper JAR not found. Please run 'mvn -N io.takari:maven:wrapper' to generate the wrapper files." >&2
+# Define Maven Wrapper settings
+MVN_CMD="$BASEDIR/.mvn/wrapper/maven-wrapper.jar"
+MVN_PROPERTIES="$BASEDIR/.mvn/wrapper/maven-wrapper.properties"
+
+# Ensure Maven Wrapper JAR exists
+if [ ! -f "$MVN_CMD" ]; then
+  echo "Maven Wrapper JAR not found. Please run: mvn -N io.takari:maven:wrapper" >&2
   exit 1
 fi
 
-# Run the Maven Wrapper
-exec "$JAVA_EXEC" -jar "$WRAPPER_JAR" "$@"
+# Execute Maven Wrapper
+exec "$JAVA_EXE" -jar "$MVN_CMD" "$@"
